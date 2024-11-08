@@ -1,107 +1,67 @@
 import React, { useState } from 'react';
+import './Login.css';
 
 const Login = ({ onLogin, onToggleSignUp }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // Add login logic here
-        onLogin();  
+
+        try {
+            const response = await fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('token', data.token); // Store token
+                onLogin(); // Call onLogin callback if successful
+            } else {
+                setError(data.msg || 'Login failed');
+            }
+        } catch (err) {
+            setError('An error occurred. Please try again.');
+            console.error(err);
+        }
     };
 
     return (
-        <div
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                backgroundColor: '#081b29',
-                color: '#fff',
-            }}
-        >
-            <form
-                onSubmit={handleLogin}
-                style={{
-                    backgroundColor: '#111',
-                    padding: '40px',
-                    borderRadius: '10px',
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)',
-                    width: '300px',
-                }}
-            >
-                <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Login</h2>
-                <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', marginBottom: '5px' }}>Email</label>
+        <div className="login-container">
+            <form onSubmit={handleLogin} className="login-form">
+                <h2 className="login-title">Login</h2>
+
+                {error && <p className="login-error">{error}</p>}
+
+                <div className="login-input-container">
+                    <label className="login-label">Email</label>
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        style={{
-                            width: '100%',
-                            padding: '10px',
-                            borderRadius: '5px',
-                            border: '1px solid #ccc',
-                            backgroundColor: '#222',
-                            color: '#fff',
-                        }}
+                        className="login-input"
                     />
                 </div>
-                <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', marginBottom: '5px' }}>Password</label>
+                <div className="login-input-container">
+                    <label className="login-label">Password</label>
                     <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        style={{
-                            width: '100%',
-                            padding: '10px',
-                            borderRadius: '5px',
-                            border: '1px solid #ccc',
-                            backgroundColor: '#222',
-                            color: '#fff',
-                        }}
+                        className="login-input"
                     />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <button
-                        type="submit"
-                        style={{
-                            width: '45%',
-                            padding: '10px',
-                            backgroundColor: '#007bff',
-                            border: 'none',
-                            borderRadius: '5px',
-                            color: '#fff',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                            transition: 'background-color 0.3s',
-                        }}
-                        onMouseOver={(e) => (e.target.style.backgroundColor = '#0056b3')}
-                        onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
-                    >
+                <div className="login-button-container">
+                    <button type="submit" className="login-button">
                         Login
                     </button>
-                    <button
-                        type="button"
-                        style={{
-                            width: '45%',
-                            padding: '10px',
-                            backgroundColor: '#28a745',
-                            border: 'none',
-                            borderRadius: '5px',
-                            color: '#fff',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                            transition: 'background-color 0.3s',
-                        }}
-                        onClick={onToggleSignUp}
-                        onMouseOver={(e) => (e.target.style.backgroundColor = '#218838')}
-                        onMouseOut={(e) => (e.target.style.backgroundColor = '#28a745')}
-                    >
+                    <button type="button" className="signup-button" onClick={onToggleSignUp}>
                         Sign Up
                     </button>
                 </div>

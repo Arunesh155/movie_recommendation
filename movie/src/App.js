@@ -113,7 +113,7 @@ useEffect(() => {
                 }}
             >
                 {!isLoggedIn ? (
-                    !isUserSignedUp ? (
+                    !isSignUp ? (
                         <Login onLogin={() => setIsLoggedIn(true)} onToggleSignUp={() => setIsSignUp(true)} />
                     ) : (
                         <SignUp
@@ -134,7 +134,7 @@ useEffect(() => {
                                 textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
                             }}
                         >
-                            Tamil Movie Recommendations
+                            Movie Recommendations
                         </h1>
 
                         <div style={{ position: 'absolute', top: '20px', right: '20px' }}>
